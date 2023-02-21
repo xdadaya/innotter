@@ -13,7 +13,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, str]) -> User:
         return User.objects.create_user(**validated_data)
 
 
@@ -29,7 +29,7 @@ class LoginSerializer(serializers.ModelSerializer):
             'password': {'write_only': True}
         }
 
-    def validate(self, data):
+    def validate(self, data) -> dict[str, str]:
         username = data.get('username', None)
         password = data.get('password', None)
 

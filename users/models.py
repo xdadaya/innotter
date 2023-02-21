@@ -1,9 +1,10 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
-from .managers import UserManager
+from users.managers import UserManager
 from datetime import datetime, timedelta
-import jwt
 from django.conf import settings
+import jwt
+import os
 
 
 class User(AbstractUser, PermissionsMixin):
@@ -20,13 +21,11 @@ class User(AbstractUser, PermissionsMixin):
     objects = UserManager()
 
     @property
-    def token(self):
-        return self._generate_jwt_token()
-
-    def _generate_jwt_token(self):
-        dt = datetime.now() + timedelta(days=1)
+    def token(self) -> str:
+        exp_dt = datetime.now() + timedelta(days=os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE"))
         token = jwt.encode({
             'id': self.pk,
-            'exp': int(dt.strftime('%s'))
-        }, settings.SECRET_KEY, algorithm='HS256')
+            'exp': exp_dt
+        }, settings.SECRET_KEY, algorithm=os.environ.get("HASH_ALGORITHM"))
         return token
+
