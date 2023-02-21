@@ -15,12 +15,15 @@ ENV PYTHONDONTWRITEBYTECODE 1
 ENV PYTHONUNBUFFERED 1
 
 # install dependencies
-RUN pip install --upgrade pip
+COPY Pipfile Pipfile.lock ./
+RUN python -m pip install --upgrade pip
+RUN pip install pipenv && pipenv install --dev --system --deploy
+
 
 # copy whole project to your docker home directory.
 COPY . $DockerHOME
 # run this command to install all dependencies
-RUN pip install -r requirements.txt
+RUN pipenv
 
 
 ADD run_server.sh /run_server.sh

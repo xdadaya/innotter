@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./innotter/.env
+      - ./.env
     depends_on:
       db:
         condition: service_started
