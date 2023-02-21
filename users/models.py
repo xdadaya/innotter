@@ -22,10 +22,10 @@ class User(AbstractUser, PermissionsMixin):
 
     @property
     def token(self) -> str:
-        exp_dt = datetime.now() + timedelta(days=os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE"))
+        expires_at = datetime.now() + timedelta(days=os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE"))
         token = jwt.encode({
             'id': self.pk,
-            'exp': exp_dt
+            'exp': expires_at
         }, settings.SECRET_KEY, algorithm=os.environ.get("HASH_ALGORITHM"))
         return token
 
