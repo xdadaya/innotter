@@ -43,7 +43,7 @@ class LoginSerializer(serializers.ModelSerializer):
                 'A password is required to log in.'
             )
 
-        user = authenticate(username = username, password = password)
+        user = authenticate(username=username, password=password)
 
         if user is None:
             raise serializers.ValidationError(
@@ -55,3 +55,8 @@ class LoginSerializer(serializers.ModelSerializer):
             'token': user.token
         }
 
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ["id", "username", "role"]

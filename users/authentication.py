@@ -1,3 +1,5 @@
+import os
+
 import jwt
 from django.conf import settings
 from rest_framework import authentication, exceptions
@@ -6,7 +8,7 @@ from django.http import HttpRequest
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
-    authentication_header_prefix = 'Token'
+    authentication_header_prefix = 'Bearer'
 
     def authenticate(self, request: HttpRequest) -> (User, str):
         request.user = None
@@ -26,25 +28,21 @@ class JWTAuthentication(authentication.BaseAuthentication):
         token = auth_header[1].decode('utf-8')
 
         if prefix.lower() != auth_header_prefix:
+
             return None
 
         return self._authenticate_credentials(request, token)
 
     def _authenticate_credentials(self, request: HttpRequest, token: str) -> (User, str):
         try:
-            payload = jwt.decode(token, settings.SECRET_KEY)
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=os.environ.get("HASH_ALGORITHM"))
         except Exception:
-            msg = 'Ошибка аутентификации. Невозможно декодировать токеню'
+            msg = 'Authentication error. Unable to decode token'
             raise exceptions.AuthenticationFailed(msg)
 
         try:
             user = User.objects.get(pk=payload['id'])
         except User.DoesNotExist:
-            msg = 'Пользователь соответствующий данному токену не найден.'
+            msg = 'There is no user with that token.'
             raise exceptions.AuthenticationFailed(msg)
-
-        if not user.is_active:
-            msg = 'Данный пользователь деактивирован.'
-            raise exceptions.AuthenticationFailed(msg)
-
         return user, token
