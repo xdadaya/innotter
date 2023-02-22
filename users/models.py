@@ -25,7 +25,7 @@ class User(UserABC):
     def token(self) -> str:
         expires_at = datetime.now() + timedelta(days=int(os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE")))
         token = jwt.encode({
-            'id': self.pk,
+            'id': str(self.pk),
             'exp': expires_at
         }, settings.SECRET_KEY, algorithm=os.environ.get("HASH_ALGORITHM"))
         return token

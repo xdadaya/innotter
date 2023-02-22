@@ -8,7 +8,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['email', 'username', 'password']
+        fields = ('email', 'username', 'password')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -24,7 +24,7 @@ class LoginSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ['username', 'password', 'token']
+        fields = ('username', 'password', 'token')
         extra_kwargs = {
             'password': {'write_only': True}
         }
@@ -57,6 +57,8 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
+    id = serializers.UUIDField(format='hex')
+
     class Meta:
         model = User
         fields = ("id", "username", "role")
