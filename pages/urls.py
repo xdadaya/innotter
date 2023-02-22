@@ -3,6 +3,6 @@ from pages.views import PageViewSet
 
 
 router = routers.SimpleRouter()
-router.register(r'api/page', PageViewSet, basename='page')
+router.register(r'api/pages', PageViewSet, basename='page')
 
 urlpatterns = router.urls

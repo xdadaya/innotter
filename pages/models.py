@@ -1,10 +1,11 @@
 from django.db import models
 from innotter import settings
+import uuid
 
 
 class Page(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     name = models.CharField(max_length=80)
-    uuid = models.CharField(max_length=36, unique=True)
     description = models.TextField()
     tags = models.ManyToManyField('tags.Tag', related_name='pages')
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='pages')

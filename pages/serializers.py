@@ -7,7 +7,7 @@ from tags.models import Tag
 
 class PageSerializer(serializers.ModelSerializer):
     image = serializers.URLField(read_only=True)
-    uploaded_image = serializers.ImageField(max_length=1000000, write_only=True, required=False)
+    uploaded_image = serializers.ImageField(max_length=64, write_only=True, required=False)
     uuid = serializers.CharField(read_only=True)
     owner = UserSerializer(read_only=True)
     uploaded_tags = serializers.ListField(child=serializers.CharField(max_length=30), write_only=True)
@@ -20,30 +20,20 @@ class PageSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data: dict[str, str]) -> Page:
-        tags = validated_data.pop("uploaded_tags")
-        all_created_tags = Tag.objects.all()
-        all_created_tags_names = list(map(lambda x: x.name, Tag.objects.all()))
+        tags_names = validated_data.pop("uploaded_tags")
         page = Page.objects.create(**validated_data)
-        for tag in tags:
-            if tag not in all_created_tags_names:
-                new_tag = Tag.objects.create(name=tag)
-                page.tags.add(new_tag)
-            else:
-                page.tags.add(list(all_created_tags.filter(name=tag).values_list('pk', flat=True))[0])
+        for tag_name in tags_names:
+            tag = Tag.objects.get_or_create(name=tag_name)[0]
+            page.tags.add(TagSerializer(tag).data["id"])
         return page
 
     def update(self, instance: Page, validated_data: dict[str, str]) -> Page:
-        tags = validated_data.pop("uploaded_tags")
-        all_created_tags = Tag.objects.all()
-        all_created_tags_names = list(map(lambda x: x.name, Tag.objects.all()))
+        tags_names = validated_data.pop("uploaded_tags")
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('name', instance.description)
         instance.tags.clear()
-        for tag in tags:
-            if tag not in all_created_tags_names:
-                new_tag = Tag.objects.create(name=tag)
-                instance.tags.add(new_tag)
-            else:
-                instance.tags.add(list(all_created_tags.filter(name=tag).values_list('pk', flat=True))[0])
+        for tag_name in tags_names:
+            tag = Tag.objects.get_or_create(name=tag_name)[0]
+            instance.tags.add(TagSerializer(tag).data["id"])
         instance.save()
         return instance
