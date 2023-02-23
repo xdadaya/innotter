@@ -1,5 +1,6 @@
 from django.db import models
 from pages.models import Page
+from innotter import settings
 import uuid
 
 
@@ -10,3 +11,4 @@ class Post(models.Model):
     reply_to = models.ForeignKey('posts.Post', on_delete=models.SET_NULL, null=True, related_name='replies')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    likes = models.ManyToManyField(settings.AUTH_USER_MODEL, related_name='likes')

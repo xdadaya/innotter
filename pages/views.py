@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet, mixins, GenericViewSet
-from pages.PageService import PageService
+from pages.page_service import PageService
 from pages.models import Page, FollowRequest
 from pages.serializers import PageSerializer, FollowRequestSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
