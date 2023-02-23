@@ -24,7 +24,7 @@ class PageSerializer(serializers.ModelSerializer):
         page = Page.objects.create(**validated_data)
         for tag_name in tags_names:
             tag = Tag.objects.get_or_create(name=tag_name)[0]
-            page.tags.add(TagSerializer(tag).data["id"])
+            page.tags.add(tag.id)
         return page
 
     def update(self, instance: Page, validated_data: dict[str, str]) -> Page:
@@ -34,6 +34,6 @@ class PageSerializer(serializers.ModelSerializer):
         instance.tags.clear()
         for tag_name in tags_names:
             tag = Tag.objects.get_or_create(name=tag_name)[0]
-            instance.tags.add(TagSerializer(tag).data["id"])
+            instance.tags.add(tag.id)
         instance.save()
         return instance
