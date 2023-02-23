@@ -9,7 +9,7 @@ class PageService:
     @staticmethod
     def follow(user: User, pk: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
-        if page.is_private and user not in page.followers.all():
+        if page.is_private and not page.followers.filter(username=user.username).exists():
             page.follow_requests.add(user)
         else:
             page.followers.add(user)
@@ -26,7 +26,7 @@ class PageService:
     def accept_single_request(pk: uuid.UUID, user_id: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
         user = User.objects.get(id=user_id)
-        if user in page.follow_requests.all():
+        if page.follow_requests.filter(username=user.username).exists():
             page.follow_requests.remove(user)
             page.followers.add(user)
 
