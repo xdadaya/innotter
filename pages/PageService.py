@@ -1,6 +1,6 @@
 from users.models import User
 from users.serializers import UserSerializer
-from pages.models import Page
+from pages.models import Page, FollowRequest
 from datetime import date, timedelta
 import uuid
 
@@ -10,25 +10,33 @@ class PageService:
     def follow(user: User, pk: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
         if page.is_private and not page.followers.filter(username=user.username).exists():
-            page.follow_requests.add(user)
+            FollowRequest.objects.create(follower=user, page=page)
         else:
             page.followers.add(user)
 
     @staticmethod
     def accept_all_requests(pk: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
-        all_follow_requests = page.follow_requests.all()
-        for request in all_follow_requests:
-            page.followers.add(request)
-        page.follow_requests.clear()
+        for request in FollowRequest.objects.filter(page=page):
+            page.followers.add(request.follower)
+        FollowRequest.objects.filter(page=page).delete()
 
     @staticmethod
-    def accept_single_request(pk: uuid.UUID, user_id: uuid.UUID) -> None:
+    def reject_all_requests(pk: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
-        user = User.objects.get(id=user_id)
-        if page.follow_requests.filter(username=user.username).exists():
-            page.follow_requests.remove(user)
-            page.followers.add(user)
+        FollowRequest.objects.filter(page=page).delete()
+
+    @staticmethod
+    def accept_single_request(pk: uuid.UUID, request_id: uuid.UUID) -> None:
+        page = Page.objects.get(id=pk)
+        if FollowRequest.objects.filter(id=request_id).exists():
+            request = FollowRequest.objects.get(id=request_id)
+            page.followers.add(request.follower)
+            request.delete()
+
+    @staticmethod
+    def reject_single_request(request_id: uuid.UUID) -> None:
+        FollowRequest.objects.filter(id=request_id).delete()
 
     @staticmethod
     def follow_requests(pk: uuid.UUID) -> list[User]:

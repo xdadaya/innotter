@@ -1,8 +1,16 @@
 from rest_framework import serializers
-from pages.models import Page
+from pages.models import Page, FollowRequest
 from users.serializers import UserSerializer
 from tags.serializers import TagSerializer
 from tags.models import Tag
+
+
+class FollowRequestSerializer(serializers.ModelSerializer):
+    follower = UserSerializer(read_only=True)
+
+    class Meta:
+        model = FollowRequest
+        fields = "__all__"
 
 
 class PageSerializer(serializers.ModelSerializer):
@@ -13,7 +21,7 @@ class PageSerializer(serializers.ModelSerializer):
     uploaded_tags = serializers.ListField(child=serializers.CharField(max_length=30), write_only=True)
     tags = TagSerializer(many=True, read_only=True)
     followers = UserSerializer(many=True, read_only=True)
-    follow_requests = UserSerializer(many=True, read_only=True)
+    follow_requests = FollowRequestSerializer(many=True, read_only=True)
 
     class Meta:
         model = Page
