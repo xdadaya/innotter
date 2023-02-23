@@ -18,7 +18,7 @@ class PageViewSet(ModelViewSet):
 
     def perform_create(self, serializer: PageSerializer) -> None:
         serializer.save(owner=self.request.user)
-
+        
     @action(detail=True, methods=["PATCH"], url_path='set-private')
     def set_private(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.set_private(pk)

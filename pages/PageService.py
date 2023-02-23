@@ -2,6 +2,7 @@ from users.models import User
 from users.serializers import UserSerializer
 from pages.models import Page, FollowRequest
 from datetime import date, timedelta
+from django.shortcuts import get_object_or_404
 import uuid
 
 
@@ -29,10 +30,9 @@ class PageService:
     @staticmethod
     def accept_single_request(pk: uuid.UUID, request_id: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
-        if FollowRequest.objects.filter(id=request_id).exists():
-            request = FollowRequest.objects.get(id=request_id)
-            page.followers.add(request.follower)
-            request.delete()
+        request = get_object_or_404(FollowRequest, id=request_id)
+        page.followers.add(request.follower)
+        request.delete()
 
     @staticmethod
     def reject_single_request(request_id: uuid.UUID) -> None:
