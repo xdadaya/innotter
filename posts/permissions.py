@@ -5,7 +5,7 @@ from rest_framework.viewsets import ModelViewSet
 from users.models import User
 
 
-class PostPermissions(permissions.BasePermission):
+class IsOwnerOrStaff(permissions.BasePermission):
     def has_object_permission(self, request: HttpRequest, view: ModelViewSet, obj: Post) -> bool:
         if request.method in permissions.SAFE_METHODS:
             return True

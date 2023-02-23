@@ -6,7 +6,6 @@ import uuid
 class PostService:
     @staticmethod
     def like(pk: uuid.UUID, user: User) -> None:
-        print(user)
         post = Post.objects.get(id=pk)
         post.likes.add(user)
 

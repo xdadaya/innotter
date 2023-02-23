@@ -1,8 +1,8 @@
 from rest_framework.viewsets import ModelViewSet
 from posts.models import Post
 from posts.serializers import PostSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
-from posts.permissions import PostPermissions
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from posts.permissions import IsOwnerOrStaff
 from rest_framework.decorators import action
 from django.http import HttpRequest
 from rest_framework.response import Response
@@ -14,7 +14,7 @@ import uuid
 class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, PostPermissions)
+    permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrStaff)
 
     @action(detail=True, methods=["PATCH"], url_path=r'like')
     def like(self, request: HttpRequest, pk: uuid.UUID) -> Response:
