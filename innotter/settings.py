@@ -135,6 +135,10 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 AUTH_USER_MODEL = "users.User"
 
+AUTHENTICATION_HEADER_PREFIX = 'BEARER'
+HASH_ALGORITHM = os.environ.get("HASH_ALGORITHM")
+DELTA_DAYS_FOR_TOKEN_TO_EXPIRE = os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE")
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'users.authentication.JWTAuthentication',
