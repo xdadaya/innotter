@@ -16,12 +16,12 @@ class PostViewSet(ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrStaff)
 
-    @action(detail=True, methods=["PATCH"], url_path=r'like')
+    @action(detail=True, methods=["POST"], url_path=r'like')
     def like(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PostService.like(pk, request.user)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"], url_path=r'dislike')
+    @action(detail=True, methods=["POST"], url_path=r'dislike')
     def dislike(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PostService.dislike(pk, request.user)
         return Response(status=status.HTTP_200_OK)
