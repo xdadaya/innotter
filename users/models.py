@@ -1,11 +1,9 @@
 from django.db import models
 from users.managers import UserManager
-from datetime import datetime, timedelta
-from django.conf import settings
 from users.userABC import UserABC
-import jwt
-import os
+from users.token_service import TokenService
 import uuid
+
 
 class User(UserABC):
     class Roles(models.TextChoices):
@@ -23,10 +21,5 @@ class User(UserABC):
 
     @property
     def token(self) -> str:
-        expires_at = datetime.now() + timedelta(days=int(os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE")))
-        token = jwt.encode({
-            'id': str(self.pk),
-            'exp': expires_at
-        }, settings.SECRET_KEY, algorithm=os.environ.get("HASH_ALGORITHM"))
-        return token
+        return TokenService.generate_token(self.id)
 

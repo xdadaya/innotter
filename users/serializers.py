@@ -1,20 +1,27 @@
 from rest_framework import serializers
 from users.models import User
 from django.contrib.auth import authenticate
+from shared.s3service import S3Service
 
 
 class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, max_length=64, write_only=True)
+    image_s3_path = serializers.URLField(read_only=True)
+    uploaded_image = serializers.ImageField(max_length=64, write_only=True, required=False)
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password')
+        fields = ('email', 'username', 'password', 'uploaded_image', 'image_s3_path')
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
     def create(self, validated_data: dict[str, str]) -> User:
-        return User.objects.create_user(**validated_data)
+        img = validated_data.pop("uploaded_image") if "uploaded_image" in validated_data.keys() else None
+        user = User.objects.create_user(**validated_data)
+        if img:
+            user.image_s3_path = S3Service.upload_file(img)
+        return user
 
 
 class LoginSerializer(serializers.ModelSerializer):
