@@ -16,6 +16,13 @@ class PageService:
             page.followers.add(user)
 
     @staticmethod
+    def unfollow(user: User, pk: uuid.UUID) -> None:
+        page = Page.objects.get(id=pk)
+        page.followers.remove(user)
+        FollowRequest.objects.filter(follower=user, page=page).delete()
+
+
+    @staticmethod
     def accept_all_requests(pk: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
         for request in FollowRequest.objects.filter(page=page):

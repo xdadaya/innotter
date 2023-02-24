@@ -34,6 +34,11 @@ class PageViewSet(ModelViewSet):
         PageService.follow(request.user, pk)
         return Response(status=status.HTTP_200_OK)
 
+    @action(detail=True, methods=["PATCH"])
+    def unfollow(self, request: HttpRequest, pk: uuid.UUID) -> Response:
+        PageService.unfollow(request.user, pk)
+        return Response(status=status.HTTP_200_OK)
+
     @action(detail=True, methods=["PATCH"], url_path="accept-all")
     def accept_all_requests(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.accept_all_requests(pk)
