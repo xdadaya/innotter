@@ -29,32 +29,32 @@ class PageViewSet(ModelViewSet):
         PageService.set_public(pk)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"])
+    @action(detail=True, methods=["POST"])
     def follow(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.follow(request.user, pk)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"])
+    @action(detail=True, methods=["POST"])
     def unfollow(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.unfollow(request.user, pk)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"], url_path="accept-all")
+    @action(detail=True, methods=["POST"], url_path="accept-all")
     def accept_all_requests(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.accept_all_requests(pk)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"], url_path="reject-all")
+    @action(detail=True, methods=["POST"], url_path="reject-all")
     def reject_all_requests(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.reject_all_requests(pk)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"], url_path=r'accept-single/(?P<request_id>[^/.]+)')
+    @action(detail=True, methods=["POST"], url_path=r'accept-single/(?P<request_id>[^/.]+)')
     def accept_single_request(self, request: HttpRequest, pk: uuid.UUID, request_id: uuid.UUID) -> Response:
         PageService.accept_single_request(pk, request_id)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"], url_path=r'reject-single/(?P<request_id>[^/.]+)')
+    @action(detail=True, methods=["POST"], url_path=r'reject-single/(?P<request_id>[^/.]+)')
     def reject_single_request(self, request: HttpRequest, pk: uuid.UUID, request_id: uuid.UUID) -> Response:
         PageService.reject_single_request(request_id)
         return Response(status=status.HTTP_200_OK)
