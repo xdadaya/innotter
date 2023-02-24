@@ -1,6 +1,9 @@
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
-from users.token_service import TokenService
+from datetime import datetime, timedelta
+from django.conf import settings
+import jwt
+import os
 
 
 class UserABC(AbstractUser, PermissionsMixin):
@@ -16,7 +19,12 @@ class UserABC(AbstractUser, PermissionsMixin):
 
     @property
     def token(self) -> str:
-        return TokenService.generate_token(self.id)
+        expires_at = datetime.now() + timedelta(days=int(os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE")))
+        token = jwt.encode({
+            'id': self.pk,
+            'exp': expires_at
+        }, settings.SECRET_KEY, algorithm=os.environ.get("HASH_ALGORITHM"))
+        return token
 
     class Meta:
         abstract = True
