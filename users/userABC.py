@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser, PermissionsMixin
 from django.db import models
-from users.token_service import TokenService
+
 
 class UserABC(AbstractUser, PermissionsMixin):
     class Roles(models.TextChoices):
@@ -12,10 +12,6 @@ class UserABC(AbstractUser, PermissionsMixin):
     role = models.CharField(max_length=9, choices=Roles.choices)
     title = models.CharField(max_length=80)
     is_blocked = models.BooleanField(default=False)
-
-    @property
-    def token(self) -> str:
-        return TokenService.generate_token(self.id)
 
     class Meta:
         abstract = True

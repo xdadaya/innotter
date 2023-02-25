@@ -144,6 +144,8 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
 AWS_S3_REGION = os.environ.get("AWS_S3_REGION")
 
+AWS_S3_BUCKET_BASE_FILE_URL = url = f"https://s3-{AWS_S3_REGION}.amazonaws.com/{AWS_S3_BUCKET_NAME}/"
+
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'users.authentication.JWTAuthentication',

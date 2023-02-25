@@ -3,7 +3,7 @@ from pages.models import Page, FollowRequest
 from users.serializers import UserSerializer
 from tags.serializers import TagSerializer
 from tags.models import Tag
-from shared.s3service import S3Service
+from shared.s3_service import S3Service
 
 
 class FollowRequestSerializer(serializers.ModelSerializer):
@@ -29,7 +29,7 @@ class PageSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data: dict[str, str]) -> Page:
-        img = validated_data.pop("uploaded_image") if "uploaded_image" in validated_data.keys() else None
+        img = validated_data.pop("uploaded_image", None)
         tags_names = validated_data.pop("uploaded_tags")
         page = Page.objects.create(**validated_data)
         if img:
@@ -40,7 +40,7 @@ class PageSerializer(serializers.ModelSerializer):
         return page
 
     def update(self, instance: Page, validated_data: dict[str, str]) -> Page:
-        img = validated_data.pop("uploaded_image") if "uploaded_image" in validated_data.keys() else None
+        img = validated_data.pop("uploaded_image", None)
         tags_names = validated_data.pop("uploaded_tags")
         instance.name = validated_data.get('name', instance.name)
         if instance.image:

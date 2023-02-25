@@ -1,7 +1,6 @@
 from django.db import models
 from users.managers import UserManager
 from users.userABC import UserABC
-from users.token_service import TokenService
 import uuid
 
 
@@ -18,8 +17,3 @@ class User(UserABC):
     is_blocked = models.BooleanField(default=False)
 
     objects = UserManager()
-
-    @property
-    def token(self) -> str:
-        return TokenService.generate_token(self.id)
-

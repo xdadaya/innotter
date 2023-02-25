@@ -9,7 +9,7 @@ import uuid
 from pages.permissions import IsOwner, IsModerator, IsAdmin, FollowerRequestManage
 from rest_framework.decorators import action
 from django.http import HttpRequest
-from shared.s3service import S3Service
+from shared.s3_service import S3Service
 
 
 class PageViewSet(ModelViewSet):
@@ -31,7 +31,6 @@ class PageViewSet(ModelViewSet):
         instance.delete()
 
     def get_permissions(self) -> BasePermission:
-        print(self.action)
         permissions = {
             'list': [AllowAny],
             'create': [IsAuthenticated],
@@ -48,7 +47,6 @@ class PageViewSet(ModelViewSet):
             'follow_requests': [IsOwner],
             'block_page': [IsAdmin | IsModerator],
         }
-        print(permissions.get(self.action))
         return [permission() for permission in permissions.get(self.action)]
 
     @action(detail=True, methods=["PATCH"], url_path='set-private')
