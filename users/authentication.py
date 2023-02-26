@@ -1,33 +1,17 @@
-import jwt
-from django.conf import settings
 from rest_framework import authentication, exceptions
 from users.models import User
 from django.http import HttpRequest
+from users.token_service import TokenService
+from innotter import settings
+from datetime import datetime
+import jwt
 
 
 class JWTAuthentication(authentication.BaseAuthentication):
-    authentication_header_prefix = settings.AUTHENTICATION_HEADER_PREFIX
-
     def authenticate(self, request: HttpRequest) -> (User, str):
         auth_header = authentication.get_authorization_header(request).split()
-        print(auth_header)
-        auth_header_prefix = self.authentication_header_prefix.lower()
-
-        if not auth_header:
-            return None
-
-        if len(auth_header) == 1:
-            return None
-
-        elif len(auth_header) > 2:
-            return None
-
-        prefix = auth_header[0].decode('utf-8')
-        print(prefix)
-        token = auth_header[1].decode('utf-8')
-        print(token)
-
-        if prefix.lower() != auth_header_prefix:
+        token = TokenService.verify_token(auth_header)
+        if token is None:
             return None
         return self._authenticate_credentials(request, token)
 
@@ -36,6 +20,10 @@ class JWTAuthentication(authentication.BaseAuthentication):
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.HASH_ALGORITHM)
         except Exception:
             msg = 'Authentication error. Unable to decode token'
+            raise exceptions.AuthenticationFailed(msg)
+
+        if payload["exp"] < int(datetime.now().timestamp()):
+            msg = "Token is expired"
             raise exceptions.AuthenticationFailed(msg)
 
         try:

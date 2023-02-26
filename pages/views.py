@@ -4,21 +4,51 @@ from rest_framework.viewsets import ModelViewSet, mixins, GenericViewSet
 from pages.page_service import PageService
 from pages.models import Page, FollowRequest
 from pages.serializers import PageSerializer, FollowRequestSerializer
-from rest_framework.permissions import IsAuthenticatedOrReadOnly
+from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission
 import uuid
 from pages.permissions import IsOwner, IsModerator, IsAdmin, FollowerRequestManage
 from rest_framework.decorators import action
 from django.http import HttpRequest
+from shared.s3_service import S3Service
 
 
 class PageViewSet(ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, IsOwner | IsModerator | IsAdmin)
 
     def perform_create(self, serializer: PageSerializer) -> None:
         serializer.save(owner=self.request.user)
-        
+
+    def destroy(self, request: HttpRequest, *args, **kwargs) -> Response:
+        instance = self.get_object()
+        self.perform_destroy(instance)
+        return Response(status=status.HTTP_200_OK)
+
+    def perform_destroy(self, instance: Page) -> None:
+        if instance.image:
+            file_key = instance.image[instance.image.rindex('/') + 1:]
+            S3Service.delete_file(file_key)
+        instance.delete()
+
+    def get_permissions(self) -> BasePermission:
+        permissions = {
+            'list': [AllowAny],
+            'create': [IsAuthenticated],
+            'retrieve': [AllowAny],
+            'update': [IsOwner | IsModerator | IsAdmin],
+            'partial-update': [IsOwner | IsModerator | IsAdmin],
+            'destroy': [IsOwner | IsModerator | IsAdmin],
+            'set_private': [IsOwner],
+            'set_public': [IsOwner],
+            'accept_single_request': [IsOwner],
+            'reject_single_request': [IsOwner],
+            'accept_all_requests': [IsOwner],
+            'reject_all_requests': [IsOwner],
+            'follow_requests': [IsOwner],
+            'block_page': [IsAdmin | IsModerator],
+        }
+        return [permission() for permission in permissions.get(self.action)]
+
     @action(detail=True, methods=["PATCH"], url_path='set-private')
     def set_private(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.set_private(pk)
