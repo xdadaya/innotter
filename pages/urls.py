@@ -1,5 +1,5 @@
 from rest_framework import routers
-from pages.views import PageViewSet, FollowRequestViewSet
+from pages.views import PageViewSet
 
 
 router = routers.SimpleRouter()

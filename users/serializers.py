@@ -8,10 +8,11 @@ class RegistrationSerializer(serializers.ModelSerializer):
     password = serializers.CharField(min_length=8, max_length=64, write_only=True)
     image_s3_path = serializers.URLField(read_only=True)
     uploaded_image = serializers.ImageField(max_length=64, write_only=True, required=False)
+    title = serializers.CharField(max_length=80, required=False)
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'uploaded_image', 'image_s3_path')
+        fields = ('email', 'username', 'password', 'uploaded_image', 'image_s3_path', 'title')
         extra_kwargs = {
             'password': {'write_only': True}
         }
