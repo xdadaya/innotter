@@ -63,8 +63,9 @@ class LoginSerializer(serializers.ModelSerializer):
 
 
 class UserSerializer(serializers.ModelSerializer):
-    id = serializers.UUIDField(format='hex')
+    id = serializers.UUIDField()
+    title = serializers.CharField()
 
     class Meta:
         model = User
-        fields = ("id", "username", "role")
+        fields = ("id", "username", "role", "title")

@@ -10,11 +10,14 @@ from pages.permissions import IsOwner, IsModerator, IsAdmin
 from rest_framework.decorators import action
 from django.http import HttpRequest
 from shared.s3_service import S3Service
+from rest_framework import filters
 
 
 class PageViewSet(ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name', 'id', 'tags__name')
 
     def perform_create(self, serializer: PageSerializer) -> None:
         serializer.save(owner=self.request.user)
@@ -48,8 +51,7 @@ class PageViewSet(ModelViewSet):
             'reject_all_requests': [IsOwner],
             'follow_requests': [IsOwner],
             'block_page': [IsAdmin | IsModerator],
-            'block_page_permanent': [IsAdmin],
-            'search': [AllowAny]
+            'block_page_permanent': [IsAdmin]
         }
         return [permission() for permission in permissions.get(self.action, AllowAny)]
 
@@ -108,8 +110,3 @@ class PageViewSet(ModelViewSet):
     def block_page_permanent(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         PageService.block_page_permanent(pk)
         return Response(status=status.HTTP_200_OK)
-
-    @action(detail=False, methods=["GET"], url_path='search')
-    def search(self, request: HttpRequest) -> Response:
-        pages = PageService.search(request.GET)
-        return Response({"pages": pages}, status=status.HTTP_200_OK)

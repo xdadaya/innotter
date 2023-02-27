@@ -1,7 +1,7 @@
 from users.serializers import RegistrationSerializer, LoginSerializer
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status, viewsets, mixins
+from rest_framework import status, viewsets, mixins, filters
 from rest_framework.decorators import action
 from django.http import HttpRequest
 from users.token_service import TokenService
@@ -29,9 +29,12 @@ class LoginAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class ManageUserViewSet(viewsets.GenericViewSet):
+class ManageUserViewSet(mixins.ListModelMixin,
+                        viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    filter_backends = (filters.SearchFilter,)
+    search_fields = ('username', 'title')
 
     @action(detail=True, methods=["PATCH"])
     def block(self, request: HttpRequest, pk: uuid.UUID) -> Response:
@@ -43,7 +46,3 @@ class ManageUserViewSet(viewsets.GenericViewSet):
         UserService.unblock(pk)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=False, methods=["GET"])
-    def search(self, request: HttpRequest) -> Response:
-        users = UserService.search(request.GET)
-        return Response({"users": users}, status=status.HTTP_200_OK)

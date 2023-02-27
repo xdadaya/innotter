@@ -68,19 +68,3 @@ class PageService:
     @staticmethod
     def block_page_permanent(pk: uuid.UUID) -> None:
         Page.objects.filter(id=pk).update(unblock_date=date(9999, 1, 1))
-
-    @staticmethod
-    def search(params: dict[str, str]) -> list[Page]:
-        pages = Page.objects.all()
-        name = params.get("name", None)
-        page_id = params.get("id", None)
-        tag = params.get("tag", None)
-        if name is not None:
-            pages = pages.filter(name=name)
-        if page_id is not None:
-            pages = pages.filter(id=page_id)
-        if tag is not None:
-            filtered_tags = Tag.objects.filter(name=tag)
-            pages = pages.filter(tags__in=filtered_tags)
-        pages = PageSerializer(pages, many=True)
-        return pages.data
