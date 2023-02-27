@@ -42,7 +42,8 @@ class ManageUserViewSet(mixins.ListModelMixin,
         permissions = {
             'list': [IsAuthenticated],
             'block': [IsAdmin],
-            'unblock': [IsAdmin]
+            'unblock': [IsAdmin],
+            'change_role': [IsAdmin]
         }
         return [permission() for permission in permissions.get(self.action, IsAuthenticated)]
 
@@ -55,4 +56,13 @@ class ManageUserViewSet(mixins.ListModelMixin,
     def unblock(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         UserService.unblock(pk)
         return Response(status=status.HTTP_200_OK)
+
+    @action(detail=True, methods=["PATCH"], url_path=r'change-role')
+    def change_role(self, request: HttpRequest, pk: uuid.UUID) -> Response:
+        new_role = request.data.get("role", None)
+        if new_role:
+            UserService.change_role(pk, request.data.get("role", None))
+            return Response(status=status.HTTP_200_OK)
+        else:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
