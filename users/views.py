@@ -29,8 +29,7 @@ class LoginAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class BlockUsersViewSet(mixins.UpdateModelMixin,
-                        viewsets.GenericViewSet):
+class ManageUserViewSet(viewsets.GenericViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
 

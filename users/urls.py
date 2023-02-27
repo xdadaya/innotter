@@ -1,9 +1,9 @@
 from rest_framework import routers
 from django.urls import path
-from users.views import RegistrationAPIView, LoginAPIView, BlockUsersViewSet
+from users.views import RegistrationAPIView, LoginAPIView, ManageUserViewSet
 
 router = routers.SimpleRouter()
-router.register(r'api/users', BlockUsersViewSet, basename='manage-users')
+router.register(r'api/users', ManageUserViewSet, basename='manage-users')
 
 app_name = 'users'
 
