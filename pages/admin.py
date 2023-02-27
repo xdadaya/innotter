@@ -1,3 +1,7 @@
 from django.contrib import admin
+from django.contrib.auth.models import Group
+from pages.models import Page, FollowRequest
 
-# Register your models here.
+admin.site.unregister(Group)
+admin.site.register(Page)
+admin.site.register(FollowRequest)

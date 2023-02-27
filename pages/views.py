@@ -1,20 +1,23 @@
 from rest_framework import status
 from rest_framework.response import Response
-from rest_framework.viewsets import ModelViewSet, mixins, GenericViewSet
+from rest_framework.viewsets import ModelViewSet
 from pages.page_service import PageService
-from pages.models import Page, FollowRequest
-from pages.serializers import PageSerializer, FollowRequestSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated, IsAuthenticatedOrReadOnly, BasePermission
+from pages.models import Page
+from pages.serializers import PageSerializer
+from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
 import uuid
-from pages.permissions import IsOwner, IsModerator, IsAdmin, FollowerRequestManage
+from pages.permissions import IsOwner, IsModerator, IsAdmin
 from rest_framework.decorators import action
 from django.http import HttpRequest
 from shared.s3_service import S3Service
+from rest_framework import filters
 
 
 class PageViewSet(ModelViewSet):
     queryset = Page.objects.all()
     serializer_class = PageSerializer
+    filter_backends = (filters.SearchFilter, )
+    search_fields = ('name', 'id', 'tags__name')
 
     def perform_create(self, serializer: PageSerializer) -> None:
         serializer.save(owner=self.request.user)
@@ -38,6 +41,8 @@ class PageViewSet(ModelViewSet):
             'update': [IsOwner | IsModerator | IsAdmin],
             'partial-update': [IsOwner | IsModerator | IsAdmin],
             'destroy': [IsOwner | IsModerator | IsAdmin],
+            'follow': [IsAuthenticated],
+            'unfollow': [IsAuthenticated],
             'set_private': [IsOwner],
             'set_public': [IsOwner],
             'accept_single_request': [IsOwner],
@@ -46,8 +51,9 @@ class PageViewSet(ModelViewSet):
             'reject_all_requests': [IsOwner],
             'follow_requests': [IsOwner],
             'block_page': [IsAdmin | IsModerator],
+            'block_page_permanent': [IsAdmin]
         }
-        return [permission() for permission in permissions.get(self.action)]
+        return [permission() for permission in permissions.get(self.action, AllowAny)]
 
     @action(detail=True, methods=["PATCH"], url_path='set-private')
     def set_private(self, request: HttpRequest, pk: uuid.UUID) -> Response:
@@ -100,10 +106,7 @@ class PageViewSet(ModelViewSet):
         PageService.block_page(pk, delta_days)
         return Response(status=status.HTTP_200_OK)
 
-
-class FollowRequestViewSet(mixins.RetrieveModelMixin,
-                           mixins.DestroyModelMixin,
-                           GenericViewSet):
-    queryset = FollowRequest.objects.all()
-    serializer_class = FollowRequestSerializer
-    permission_classes = (IsAuthenticatedOrReadOnly, FollowerRequestManage)
+    @action(detail=True, methods=["PATCH"], url_path=r'permanent-block')
+    def block_page_permanent(self, request: HttpRequest, pk: uuid.UUID) -> Response:
+        PageService.block_page_permanent(pk)
+        return Response(status=status.HTTP_200_OK)

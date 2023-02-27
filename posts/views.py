@@ -26,4 +26,14 @@ class PostViewSet(ModelViewSet):
         PostService.dislike(pk, request.user)
         return Response(status=status.HTTP_200_OK)
 
+    @action(detail=False, methods=["GET"], url_path=r'liked', permission_classes=(IsAuthenticated, ))
+    def liked(self, request: HttpRequest) -> Response:
+        posts = PostService.liked(request.user)
+        return Response({"posts": posts}, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=["GET"], url_path=r'feed', permission_classes=(IsAuthenticated,))
+    def feed(self, request: HttpRequest) -> Response:
+        posts = PostService.feed(request.user)
+        return Response({"posts": posts}, status=status.HTTP_200_OK)
+
 
