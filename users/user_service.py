@@ -14,3 +14,7 @@ class UserService:
     @staticmethod
     def unblock(pk: uuid.UUID) -> None:
         User.objects.filter(id=pk).update(is_blocked=False)
+
+    @staticmethod
+    def change_role(pk: uuid.UUID, role: str) -> None:
+        User.objects.filter(id=pk).update(role=role)
