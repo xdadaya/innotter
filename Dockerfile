@@ -1,5 +1,5 @@
 # base image
-FROM python:3.11
+FROM public.ecr.aws/docker/library/python:3.11
 # setup environment variable
 ENV DockerHOME=/app
 #RUN apt-get update && apt-get install -y --no-install-recommends build-essential libpq-dev
