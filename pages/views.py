@@ -33,7 +33,7 @@ class PageViewSet(ModelViewSet):
             S3Service.delete_file(file_key)
         instance.delete()
 
-    def get_permissions(self) -> BasePermission:
+    def get_permissions(self) -> list[BasePermission]:
         permissions = {
             'list': [AllowAny],
             'create': [IsAuthenticated],
@@ -53,41 +53,41 @@ class PageViewSet(ModelViewSet):
             'block_page': [IsAdmin | IsModerator],
             'block_page_permanent': [IsAdmin]
         }
-        return [permission() for permission in permissions.get(self.action, AllowAny)]
+        return [permission() for permission in permissions.get(self.action, [IsAdmin])]
 
-    @action(detail=True, methods=["PATCH"], url_path='set-private')
+    @action(detail=True, methods=["PATCH"], permission_classes=[IsAuthenticated, IsOwner], url_path='set-private')
     def set_private(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.set_private(pk)
+        PageService.set_private(self.get_object().id)
         return Response(status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=["PATCH"], url_path='set-public')
+    @action(detail=True, methods=["PATCH"], permission_classes=[IsOwner], url_path='set-public')
     def set_public(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.set_public(pk)
+        PageService.set_public(self.get_object().id)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"])
     def follow(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.follow(request.user, pk)
+        PageService.follow(request.user, self.get_object().id)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"])
     def unfollow(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.unfollow(request.user, pk)
+        PageService.unfollow(request.user, self.get_object().id)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="accept-all")
     def accept_all_requests(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.accept_all_requests(pk)
+        PageService.accept_all_requests(self.get_object().id)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path="reject-all")
     def reject_all_requests(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.reject_all_requests(pk)
+        PageService.reject_all_requests(self.get_object().id)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path=r'accept-single/(?P<request_id>[^/.]+)')
     def accept_single_request(self, request: HttpRequest, pk: uuid.UUID, request_id: uuid.UUID) -> Response:
-        PageService.accept_single_request(pk, request_id)
+        PageService.accept_single_request(self.get_object().id, request_id)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["POST"], url_path=r'reject-single/(?P<request_id>[^/.]+)')
@@ -97,16 +97,16 @@ class PageViewSet(ModelViewSet):
 
     @action(detail=True, methods=["GET"], url_path='follow-requests')
     def follow_requests(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        users = PageService.follow_requests(pk)
+        users = PageService.follow_requests(self.get_object().id)
         return Response({"users": users}, status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PATCH"], url_path=r'block')
     def block_page(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         delta_days = request.data["delta_days"]
-        PageService.block_page(pk, delta_days)
+        PageService.block_page(self.get_object().id, delta_days)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PATCH"], url_path=r'permanent-block')
     def block_page_permanent(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        PageService.block_page_permanent(pk)
+        PageService.block_page_permanent(self.get_object().id)
         return Response(status=status.HTTP_200_OK)
