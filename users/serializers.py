@@ -12,16 +12,25 @@ class RegistrationSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('email', 'username', 'password', 'uploaded_image', 'image_s3_path', 'title')
+        fields = ('email', 'username', 'password', 'uploaded_image', 'image_s3_path', 'title', 'role')
         extra_kwargs = {
             'password': {'write_only': True}
         }
 
     def create(self, validated_data: dict[str, str]) -> User:
         img = validated_data.pop("uploaded_image", None)
+        title = validated_data.pop("title", None)
+        role = validated_data.pop("role", None)
         user = User.objects.create_user(**validated_data)
+        user.title = title
+        if role in (User.Roles.USER, User.Roles.ADMIN, User.Roles.MODERATOR):
+            user.role = role
+            if role == User.Roles.ADMIN:
+                user.is_staff = True
+                user.is_superuser = True
         if img:
             user.image_s3_path = S3Service.upload_file(img)
+        user.save()
         return user
 
 

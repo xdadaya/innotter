@@ -44,8 +44,8 @@ class PageService:
         request.delete()
 
     @staticmethod
-    def reject_single_request(request_id: uuid.UUID) -> None:
-        FollowRequest.objects.filter(id=request_id).delete()
+    def reject_single_request(pk: uuid.UUID, request_id: uuid.UUID) -> None:
+        FollowRequest.objects.filter(page=pk, id=request_id).delete()
 
     @staticmethod
     def follow_requests(pk: uuid.UUID) -> list[User]:

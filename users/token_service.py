@@ -25,9 +25,9 @@ class TokenService:
         elif len(auth_header) > 2:
             return None
 
-        prefix = auth_header[0].decode('utf-8')
+        prefix = auth_header[0]
         if prefix.lower() != auth_header_prefix:
             return None
 
-        token = auth_header[1].decode('utf-8')
+        token = auth_header[1]
         return token
