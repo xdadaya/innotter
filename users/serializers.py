@@ -9,6 +9,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
     image_s3_path = serializers.URLField(read_only=True)
     uploaded_image = serializers.ImageField(max_length=64, write_only=True, required=False)
     title = serializers.CharField(max_length=80, required=False)
+    role = serializers.ChoiceField([User.Roles.USER, User.Roles.MODERATOR, User.Roles.ADMIN], required=False)
 
     class Meta:
         model = User
@@ -20,14 +21,13 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data: dict[str, str]) -> User:
         img = validated_data.pop("uploaded_image", None)
         title = validated_data.pop("title", None)
-        role = validated_data.pop("role", None)
+        role = validated_data.pop("role", 'user')
         user = User.objects.create_user(**validated_data)
         user.title = title
-        if role in (User.Roles.USER, User.Roles.ADMIN, User.Roles.MODERATOR):
-            user.role = role
-            if role == User.Roles.ADMIN:
-                user.is_staff = True
-                user.is_superuser = True
+        user.role = role
+        if role == User.Roles.ADMIN:
+            user.is_staff = True
+            user.is_superuser = True
         if img:
             user.image_s3_path = S3Service.upload_file(img)
         user.save()

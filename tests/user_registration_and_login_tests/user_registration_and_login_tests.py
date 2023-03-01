@@ -8,7 +8,7 @@ def test_register_valid_data(client: APIClient) -> None:
         username="testuser",
         email="test@email.com",
         password="testpassword",
-        title="title"
+        title="title",
     )
 
     response = client.post('/api/register', payload)

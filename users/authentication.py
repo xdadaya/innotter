@@ -19,21 +19,17 @@ class JWTAuthentication(authentication.BaseAuthentication):
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms=settings.HASH_ALGORITHM)
         except Exception:
-            msg = 'Authentication error. Unable to decode token'
-            raise exceptions.AuthenticationFailed(msg)
+            raise exceptions.AuthenticationFailed('Authentication error. Unable to decode token')
 
         if payload["exp"] < int(datetime.now().timestamp()):
-            msg = "Token is expired"
-            raise exceptions.AuthenticationFailed(msg)
+            raise exceptions.AuthenticationFailed('Token is expired')
 
         try:
             user = User.objects.get(pk=payload['id'])
         except User.DoesNotExist:
-            msg = 'There is no user with that token.'
-            raise exceptions.AuthenticationFailed(msg)
+            raise exceptions.AuthenticationFailed('There is no user with that token.')
 
         if user.is_blocked:
-            msg = 'This user is blocked.'
-            raise exceptions.AuthenticationFailed(msg)
+            raise exceptions.AuthenticationFailed('This user is blocked.')
 
         return user, token

@@ -25,8 +25,6 @@ class TokenService:
         elif len(auth_header) > 2:
             return None
 
-        print(type(auth_header[0]))
-        print(type(auth_header[1]))
         prefix = auth_header[0].decode('utf-8')
         if prefix.lower() != auth_header_prefix:
             return None

@@ -19,4 +19,4 @@ def test_verify_token(user_factory: UserFactory) -> None:
     bearer_token = bytes(f"{settings.AUTHENTICATION_HEADER_PREFIX} {token}", 'utf-8')
     verified_token = TokenService.verify_token(bearer_token.split())
     assert verified_token
-    assert token==verified_token
+    assert token == verified_token
