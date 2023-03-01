@@ -16,7 +16,7 @@ class TokenService:
         return token
 
     @staticmethod
-    def verify_token(auth_header: list[str]) -> str:
+    def verify_token(auth_header: list[bytes]) -> str:
         auth_header_prefix = settings.AUTHENTICATION_HEADER_PREFIX.lower()
         if not auth_header:
             return None
@@ -25,6 +25,8 @@ class TokenService:
         elif len(auth_header) > 2:
             return None
 
+        print(type(auth_header[0]))
+        print(type(auth_header[1]))
         prefix = auth_header[0].decode('utf-8')
         if prefix.lower() != auth_header_prefix:
             return None
