@@ -28,5 +28,11 @@ services:
       - "5432:5432"
     restart: always
 
+  rabbitmq:
+    container_name: rabbitmq
+    image: public.ecr.aws/docker/library/rabbitmq:3
+    ports:
+      - "5672:5672"
+
 volumes:
   postgres:
