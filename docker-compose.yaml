@@ -13,6 +13,8 @@ services:
     depends_on:
       db:
         condition: service_started
+      rabbitmq:
+        condition: service_started
 
   db:
     container_name: db_innotter
@@ -27,6 +29,22 @@ services:
     ports:
       - "5432:5432"
     restart: always
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: public.ecr.aws/docker/library/rabbitmq:3
+    ports:
+      - "5672:5672"
+
+  celery:
+    container_name: celery
+    build: .
+    entrypoint: /celery_entrypoint.sh
+    env_file:
+      - ./.env
+    depends_on:
+      app:
+        condition: service_started
 
 volumes:
   postgres:

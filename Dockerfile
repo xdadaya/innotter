@@ -27,8 +27,8 @@ RUN pipenv
 
 
 ADD run_server.sh /run_server.sh
-RUN chmod a+x /run_server.sh
-RUN dos2unix /run_server.sh && apt-get --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*
+ADD celery_entrypoint.sh /celery_entrypoint.sh
+RUN chmod a+x /run_server.sh /celery_entrypoint.sh
+RUN dos2unix /run_server.sh /celery_entrypoint.sh && apt-get --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["/run_server.sh"]
 CMD ["run"]
-
