@@ -65,6 +65,12 @@ class LoginSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError(
                 'A user with this username and password was not found.'
             )
+
+        if user.is_blocked:
+            raise serializers.ValidationError(
+                'A user with this username is blocked'
+            )
+
         return {
             'username': user.username,
             'id': user.id

@@ -31,4 +31,9 @@ class JWTAuthentication(authentication.BaseAuthentication):
         except User.DoesNotExist:
             msg = 'There is no user with that token.'
             raise exceptions.AuthenticationFailed(msg)
+
+        if user.is_blocked:
+            msg = 'This user is blocked.'
+            raise exceptions.AuthenticationFailed(msg)
+
         return user, token
