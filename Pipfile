@@ -17,6 +17,9 @@ pillow = "*"
 boto3 = "*"
 pytest = "*"
 celery = "*"
+pytest-django = "*"
+factory-boy = "*"
+pytest-factoryboy = "*"
 
 [dev-packages]
 
