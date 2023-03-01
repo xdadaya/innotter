@@ -49,19 +49,19 @@ class ManageUserViewSet(mixins.ListModelMixin,
 
     @action(detail=True, methods=["PATCH"])
     def block(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        UserService.block(pk)
+        UserService.block(self.get_object().pk)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PATCH"])
     def unblock(self, request: HttpRequest, pk: uuid.UUID) -> Response:
-        UserService.unblock(pk)
+        UserService.unblock(self.get_object().pk)
         return Response(status=status.HTTP_200_OK)
 
     @action(detail=True, methods=["PATCH"], url_path=r'change-role')
     def change_role(self, request: HttpRequest, pk: uuid.UUID) -> Response:
         new_role = request.data.get("role", None)
         if new_role:
-            UserService.change_role(pk, request.data.get("role", None))
+            UserService.change_role(self.get_object().pk, request.data.get("role", None))
             return Response(status=status.HTTP_200_OK)
         else:
             return Response(status=status.HTTP_400_BAD_REQUEST)

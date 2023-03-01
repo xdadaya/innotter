@@ -15,7 +15,9 @@ sqlparse = "==0.4.3"
 tzdata = "==2022.7"
 pillow = "*"
 boto3 = "*"
-pytest = "*"
+pytest-django = "*"
+factory-boy = "*"
+pytest-factoryboy = "*"
 
 [dev-packages]
 
