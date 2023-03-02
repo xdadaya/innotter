@@ -144,14 +144,16 @@ AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
 AWS_S3_REGION = os.environ.get("AWS_S3_REGION")
 AWS_SES_REGION = os.environ.get("AWS_SES_REGION")
-AWS_SES_SOURCE = "germankrahotkinn@gmail.com"
+AWS_SES_SOURCE = os.environ.get("AWS_SES_SOURCE")
 
 AWS_S3_BUCKET_BASE_FILE_URL = url = f"https://s3-{AWS_S3_REGION}.amazonaws.com/{AWS_S3_BUCKET_NAME}/"
 
-CELERY_BROKER_URL = f'amqp://guest:guest@rabbitmq:5672/'
-CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
-CELERY_RESULT_BACKEND = f'rpc://guest:guest@rabbitmq:5672/'
-CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': os.environ.get("CELERY_BROKER_TRANSPORT_OPTIONS_VISIBILITY_TIMEOUT")
+}
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = [os.environ.get("CELERY_ACCEPT_CONTENT")]
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
