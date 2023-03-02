@@ -15,9 +15,13 @@ sqlparse = "==0.4.3"
 tzdata = "==2022.7"
 pillow = "*"
 boto3 = "*"
+pytest = "*"
+pika = "*"
+celery = "*"
 pytest-django = "*"
 factory-boy = "*"
 pytest-factoryboy = "*"
+exceptiongroup = "*"
 
 [dev-packages]
 

@@ -1,5 +1,6 @@
 from rest_framework.viewsets import ModelViewSet
 from posts.models import Post
+from pages.models import Page
 from posts.serializers import PostSerializer
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from posts.permissions import IsOwnerOrStaff
@@ -8,6 +9,7 @@ from django.http import HttpRequest
 from rest_framework.response import Response
 from rest_framework import status
 from posts.post_service import PostService
+from shared.ses_service import SESService
 import uuid
 
 
@@ -15,6 +17,12 @@ class PostViewSet(ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = (IsAuthenticatedOrReadOnly, IsOwnerOrStaff)
+
+    def perform_create(self, serializer: PostSerializer) -> None:
+        emails = Page.objects.get(id=serializer.data["page"]).followers.values_list("email", flat=True)
+        base_domain = self.request.get_host()
+        SESService.send_emails.delay(emails=list(emails), base_domain=base_domain,
+                                     post_content=serializer.data["content"], page_id=serializer.data["page"])
 
     @action(detail=True, methods=["POST"], url_path=r'like')
     def like(self, request: HttpRequest, pk: uuid.UUID) -> Response:
