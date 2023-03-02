@@ -22,6 +22,8 @@ pytest-django = "*"
 factory-boy = "*"
 pytest-factoryboy = "*"
 exceptiongroup = "*"
+fastapi = "*"
+uvicorn = "*"
 
 [dev-packages]
 
