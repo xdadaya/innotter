@@ -1,6 +1,6 @@
 import boto3
 from microservice.settings import settings
-
+from microservice.models import PageStatistics
 
 class PageStatisticsDatabase:
     dynamodb = boto3.resource('dynamodb', region_name=settings.AWS_DYNAMODB_REGION,
@@ -9,6 +9,6 @@ class PageStatisticsDatabase:
     table = dynamodb.Table(settings.AWS_DYNAMODB_TABLE_NAME)
 
     @classmethod
-    def get_item(cls, pk):
+    def get_item(cls, pk: str) -> PageStatistics:
         return cls.table.get_item(Key={"page_id": pk})["Item"]
 
