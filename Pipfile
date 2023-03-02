@@ -18,6 +18,10 @@ boto3 = "*"
 pytest = "*"
 pika = "*"
 celery = "*"
+pytest-django = "*"
+factory-boy = "*"
+pytest-factoryboy = "*"
+exceptiongroup = "*"
 
 [dev-packages]
 

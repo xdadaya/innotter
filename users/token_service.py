@@ -16,7 +16,7 @@ class TokenService:
         return token
 
     @staticmethod
-    def verify_token(auth_header: list[str]) -> str:
+    def verify_token(auth_header: list[bytes]) -> str:
         auth_header_prefix = settings.AUTHENTICATION_HEADER_PREFIX.lower()
         if not auth_header:
             return None
