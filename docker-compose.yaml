@@ -11,6 +11,8 @@ services:
     env_file:
       - ./.env
     depends_on:
+      rabbitmq:
+        condition: service_healthy
       db:
         condition: service_started
 
@@ -33,16 +35,24 @@ services:
     image: public.ecr.aws/docker/library/rabbitmq:3
     ports:
       - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
 
   celery:
     container_name: celery
     build: .
     entrypoint: /celery_entrypoint.sh
+    env_file:
+      - ./.env
     depends_on:
       app:
         condition: service_started
       rabbitmq:
-        condition: service_started
+        condition: service_healthy
 
 volumes:
   postgres:
