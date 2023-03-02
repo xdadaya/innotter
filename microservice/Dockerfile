@@ -14,4 +14,9 @@ RUN pip install pipenv && pipenv install --dev --system --deploy
 
 
 COPY . $DockerHOME
+COPY /microservice_entrypoint.sh /microservice_entrypoint.sh
 RUN pipenv
+
+ADD microservice_entrypoint.sh /microservice_entrypoint.sh
+RUN chmod a+x /microservice_entrypoint.sh
+RUN dos2unix /microservice_entrypoint.sh && apt-get --purge remove -y dos2unix && rm -rf /var/lib/apt/lists/*

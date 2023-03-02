@@ -1,8 +1,12 @@
+from fastapi import HTTPException
 from microservice.models import PageStatistics
-from microservice.db import table
+from microservice.db import PageStatisticsDatabase
 
 
 class PageStatisticsService:
     @staticmethod
-    def get(page_id: str) -> PageStatistics:
-        return table.get_item(Key={"page_id": page_id})["Item"]
+    def get(page_id: str, user_id: str) -> PageStatistics:
+        page = PageStatisticsDatabase.get_item(page_id)
+        if page["owner_id"] != user_id:
+            raise HTTPException(status_code=403, detail="Not owner")
+        return page
