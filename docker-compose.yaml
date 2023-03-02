@@ -59,6 +59,8 @@ services:
     build:
       context: .
       dockerfile: microservice/Dockerfile
+    volumes:
+      - .:/app/microservice
     ports:
       - "5000:5000"
     entrypoint: /microservice_entrypoint.sh
