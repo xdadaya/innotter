@@ -16,9 +16,8 @@ tzdata = "==2022.7"
 pillow = "*"
 boto3 = "*"
 pytest = "*"
-dramatiq = "*"
-django-dramatiq = "*"
 pika = "*"
+celery = "*"
 
 [dev-packages]
 

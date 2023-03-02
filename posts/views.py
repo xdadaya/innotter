@@ -9,7 +9,7 @@ from django.http import HttpRequest
 from rest_framework.response import Response
 from rest_framework import status
 from posts.post_service import PostService
-from tasks.send_email import send_emails
+from shared.ses_service import SESService
 import uuid
 
 
@@ -21,7 +21,8 @@ class PostViewSet(ModelViewSet):
     def perform_create(self, serializer: PostSerializer) -> None:
         emails = Page.objects.get(id=serializer.data["page"]).followers.values_list("email", flat=True)
         base_domain = self.request.get_host()
-        send_emails.send(emails=list(emails), base_domain=base_domain)
+        SESService.send_emails.delay(emails=list(emails), base_domain=base_domain,
+                                     post_content=serializer.data["content"], page_id=serializer.data["page"])
 
     @action(detail=True, methods=["POST"], url_path=r'like')
     def like(self, request: HttpRequest, pk: uuid.UUID) -> Response:

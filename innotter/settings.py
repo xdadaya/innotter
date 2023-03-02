@@ -39,29 +39,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "django_dramatiq",
     "rest_framework",
     "users",
     "pages",
     "tags",
     "posts"
 ]
-
-DRAMATIQ_BROKER = {
-    "BROKER": "dramatiq.brokers.rabbitmq.RabbitmqBroker",
-    "OPTIONS": {
-        "url": "amqp://guest:guest@rabbitmq:5672/",
-    },
-    "MIDDLEWARE": [
-        "dramatiq.middleware.Prometheus",
-        "dramatiq.middleware.AgeLimit",
-        "dramatiq.middleware.TimeLimit",
-        "dramatiq.middleware.Callbacks",
-        "dramatiq.middleware.Retries",
-        "django_dramatiq.middleware.DbConnectionsMiddleware",
-        "django_dramatiq.middleware.AdminMiddleware",
-    ]
-}
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -160,8 +143,15 @@ AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
 AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
 AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
 AWS_S3_REGION = os.environ.get("AWS_S3_REGION")
+AWS_SES_REGION = os.environ.get("AWS_SES_REGION")
+AWS_SES_SOURCE = "germankrahotkinn@gmail.com"
 
 AWS_S3_BUCKET_BASE_FILE_URL = url = f"https://s3-{AWS_S3_REGION}.amazonaws.com/{AWS_S3_BUCKET_NAME}/"
+
+CELERY_BROKER_URL = f'amqp://guest:guest@rabbitmq:5672/'
+CELERY_BROKER_TRANSPORT_OPTIONS = {'visibility_timeout': 3600}
+CELERY_RESULT_BACKEND = f'rpc://guest:guest@rabbitmq:5672/'
+CELERY_ACCEPT_CONTENT = ['application/json']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
