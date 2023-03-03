@@ -54,5 +54,20 @@ services:
       rabbitmq:
         condition: service_healthy
 
+  microservice:
+    container_name: microservice_statistics
+    build:
+      context: .
+      dockerfile: microservice/Dockerfile
+    volumes:
+      - .:/app/microservice
+    ports:
+      - "5000:5000"
+    entrypoint: /microservice_entrypoint.sh
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+
 volumes:
   postgres:

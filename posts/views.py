@@ -1,16 +1,18 @@
-from rest_framework.viewsets import ModelViewSet
-from posts.models import Post
-from pages.models import Page
-from posts.serializers import PostSerializer
-from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
-from posts.permissions import IsOwnerOrStaff
-from rest_framework.decorators import action
-from django.http import HttpRequest
-from rest_framework.response import Response
-from rest_framework import status
-from posts.post_service import PostService
-from shared.ses_service import SESService
 import uuid
+
+from django.http import HttpRequest
+from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
+from rest_framework.response import Response
+from rest_framework.viewsets import ModelViewSet
+
+from pages.models import Page
+from posts.models import Post
+from posts.permissions import IsOwnerOrStaff
+from posts.post_service import PostService
+from posts.serializers import PostSerializer
+from shared.ses_service import SESService
 
 
 class PostViewSet(ModelViewSet):

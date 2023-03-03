@@ -1,10 +1,12 @@
-from rest_framework import authentication, exceptions
-from users.models import User
-from django.http import HttpRequest
-from users.token_service import TokenService
-from innotter import settings
 from datetime import datetime
+
 import jwt
+from django.http import HttpRequest
+from rest_framework import authentication, exceptions
+
+from innotter import settings
+from users.models import User
+from users.token_service import TokenService
 
 
 class JWTAuthentication(authentication.BaseAuthentication):

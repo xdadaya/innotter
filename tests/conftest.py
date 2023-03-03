@@ -1,8 +1,9 @@
-from django.contrib.auth.models import AnonymousUser
-from rest_framework.test import APIClient
-from tests.factories import UserFactory, PageFactory, PostFactory
-from pytest_factoryboy import register
 import pytest
+from django.contrib.auth.models import AnonymousUser
+from pytest_factoryboy import register
+from rest_framework.test import APIClient
+
+from tests.factories import UserFactory, PageFactory, PostFactory
 
 
 @pytest.fixture

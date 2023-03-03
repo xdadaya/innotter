@@ -1,7 +1,9 @@
-from django.db import models
-from pages.models import Page
-from innotter import settings
 import uuid
+
+from django.db import models
+
+from innotter import settings
+from pages.models import Page
 
 
 class Post(models.Model):

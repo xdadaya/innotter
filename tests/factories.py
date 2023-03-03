@@ -1,9 +1,9 @@
-from users.models import User
+import factory
+from faker import Faker
+
 from pages.models import Page
 from posts.models import Post
-from faker import Faker
-import factory
-
+from users.models import User
 
 fake = Faker()
 

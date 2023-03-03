@@ -1,6 +1,8 @@
-from django.db import models
-from innotter import settings
 import uuid
+
+from django.db import models
+
+from innotter import settings
 
 
 class Page(models.Model):

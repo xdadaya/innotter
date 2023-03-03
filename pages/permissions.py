@@ -1,7 +1,8 @@
-from rest_framework import permissions
 from django.http import HttpRequest
-from pages.models import Page, FollowRequest
+from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
+
+from pages.models import Page
 from users.models import User
 
 

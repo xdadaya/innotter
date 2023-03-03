@@ -1,11 +1,11 @@
+import uuid
+from datetime import date, timedelta
+
+from django.shortcuts import get_object_or_404
+
+from pages.models import Page, FollowRequest
 from users.models import User
 from users.serializers import UserSerializer
-from pages.models import Page, FollowRequest
-from tags.models import Tag
-from pages.serializers import PageSerializer
-from datetime import date, timedelta
-from django.shortcuts import get_object_or_404
-import uuid
 
 
 class PageService:

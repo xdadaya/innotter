@@ -1,11 +1,13 @@
-from tests.factories import UserFactory, PageFactory
-from pages.page_service import PageService
-from pages.models import Page, FollowRequest
-from users.models import User
 from datetime import datetime, timedelta, date
-from pytz import utc
-from faker import Faker
+
 import pytest
+from faker import Faker
+from pytz import utc
+
+from pages.models import Page, FollowRequest
+from pages.page_service import PageService
+from tests.factories import UserFactory, PageFactory
+from users.models import User
 
 
 @pytest.mark.django_db

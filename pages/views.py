@@ -1,16 +1,18 @@
+import uuid
+
+from django.http import HttpRequest
+from rest_framework import filters
 from rest_framework import status
+from rest_framework.decorators import action
+from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
-from pages.page_service import PageService
+
 from pages.models import Page
-from pages.serializers import PageSerializer
-from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
-import uuid
+from pages.page_service import PageService
 from pages.permissions import IsOwner, IsModerator, IsAdmin
-from rest_framework.decorators import action
-from django.http import HttpRequest
+from pages.serializers import PageSerializer
 from shared.s3_service import S3Service
-from rest_framework import filters
 
 
 class PageViewSet(ModelViewSet):

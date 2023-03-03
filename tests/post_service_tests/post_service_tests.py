@@ -1,10 +1,11 @@
-from tests.factories import UserFactory, PostFactory, PageFactory
-from posts.post_service import PostService
-from pages.page_service import PageService
-from posts.serializers import PostSerializer
-from posts.models import Post, Like
-from faker import Faker
 import pytest
+from faker import Faker
+
+from pages.page_service import PageService
+from posts.models import Like
+from posts.post_service import PostService
+from posts.serializers import PostSerializer
+from tests.factories import UserFactory, PostFactory, PageFactory
 
 
 @pytest.mark.django_db
