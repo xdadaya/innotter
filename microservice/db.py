@@ -15,24 +15,33 @@ class PageStatisticsDatabase:
         return cls.table.get_item(Key={"page_id": pk})["Item"]
 
     @classmethod
-    def create_item(
-        cls, page_id: str, owner_id: str, likes_amount: int, followers_amount:int, posts_amount: int
-    ) -> None:
+    def create_item(cls, page_statistics: PageStatistics) -> None:
+        print("CREATE ITEM")
         cls.table.put_item(
             Item={
-                'page_id': page_id,
-                'owner_id': owner_id,
-                'likes_amount': likes_amount,
-                'followers_amount': followers_amount,
-                'posts_amount': posts_amount,
+                'page_id': page_statistics.page_id,
+                'owner_id': page_statistics.owner_id,
+                'likes_amount': page_statistics.likes_amount,
+                'followers_amount': page_statistics.followers_amount,
+                'posts_amount': page_statistics.posts_amount,
             },
         )
 
     @classmethod
-    def update_item(cls, page_id: str, likes_amount: int, followers_amount: int, posts_amount: int) -> None:
+    def update_item(cls, page_statistics: PageStatistics) -> None:
+        item = PageStatisticsDatabase.get_item(page_statistics.page_id)
+        likes_amount = page_statistics.likes_amount
+        posts_amount = page_statistics.posts_amount
+        followers_amount = page_statistics.followers_amount
+        if likes_amount is None:
+            likes_amount = item["likes_amount"]
+        if followers_amount is None:
+            followers_amount = item["followers_amount"]
+        if posts_amount is None:
+            posts_amount = item["posts_amount"]
         cls.table.update_item(
-            Key={'page_id': page_id},
-            UpdateExpression="set likes_amount = :la, followers_amount: :fa, posts_amount: :pa",
+            Key={'page_id': page_statistics.page_id},
+            UpdateExpression="set likes_amount = :la, followers_amount = :fa, posts_amount = :pa",
             ExpressionAttributeValues={
                 ':la': likes_amount,
                 ':fa': followers_amount,
@@ -41,5 +50,5 @@ class PageStatisticsDatabase:
         )
 
     @classmethod
-    def delete_item(cls, page_id: str) -> None:
-        cls.table.delete_item(Key={'page_id': page_id})
+    def delete_item(cls, page_statistics: PageStatistics) -> None:
+        cls.table.delete_item(Key={'page_id': page_statistics.page_id})

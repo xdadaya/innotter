@@ -1,8 +1,10 @@
+import json
 import uuid
 from datetime import date, timedelta
 
 from django.shortcuts import get_object_or_404
 
+from innotter.producer import publish
 from pages.models import Page, FollowRequest
 from users.models import User
 from users.serializers import UserSerializer
@@ -16,13 +18,24 @@ class PageService:
             FollowRequest.objects.create(follower=user, page=page)
         else:
             page.followers.add(user)
+            data = {
+                "page_id": str(page.id),
+                "owner_id": str(page.owner.id),
+                "followers_amount": page.followers.count()
+            }
+            publish("update_page", json.dumps(data))
 
     @staticmethod
     def unfollow(user: User, pk: uuid.UUID) -> None:
         page = Page.objects.get(id=pk)
         page.followers.remove(user)
         FollowRequest.objects.filter(follower=user, page=page).delete()
-
+        data = {
+            "page_id": str(page.id),
+            "owner_id": str(page.owner.id),
+            "followers_amount": page.followers.count()
+        }
+        publish("update_page", json.dumps(data))
 
     @staticmethod
     def accept_all_requests(pk: uuid.UUID) -> None:
@@ -30,6 +43,12 @@ class PageService:
         for request in FollowRequest.objects.filter(page=page):
             page.followers.add(request.follower)
         FollowRequest.objects.filter(page=page).delete()
+        data = {
+            "page_id": str(page.id),
+            "owner_id": str(page.owner.id),
+            "followers_amount": page.followers.count()
+        }
+        publish("update_page", json.dumps(data))
 
     @staticmethod
     def reject_all_requests(pk: uuid.UUID) -> None:
@@ -42,6 +61,12 @@ class PageService:
         request = get_object_or_404(FollowRequest, id=request_id)
         page.followers.add(request.follower)
         request.delete()
+        data = {
+            "page_id": str(page.id),
+            "owner_id": str(page.owner.id),
+            "followers_amount": page.followers.count()
+        }
+        publish("update_page", json.dumps(data))
 
     @staticmethod
     def reject_single_request(pk: uuid.UUID, request_id: uuid.UUID) -> None:

@@ -37,8 +37,8 @@ services:
       - "5672:5672"
     healthcheck:
       test: rabbitmq-diagnostics -q ping
-      interval: 5s
-      timeout: 5s
+      interval: 15s
+      timeout: 15s
       retries: 10
 
 
@@ -67,6 +67,28 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
+
+  producer:
+    container_name: statistics_producer
+    build: .
+    entrypoint: /producer_entrypoint.sh
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      microservice:
+        condition: service_started
+
+  consumer:
+    container_name: statistics_consumer
+    build:
+      context: .
+      dockerfile: microservice/Dockerfile
+    entrypoint: /consumer_entrypoint.sh
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      microservice:
+        condition: service_started
 
 
 volumes:

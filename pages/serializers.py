@@ -1,5 +1,8 @@
+import json
+
 from rest_framework import serializers
 
+from innotter.producer import publish
 from pages.models import Page, FollowRequest
 from shared.s3_service import S3Service
 from tags.models import Tag
@@ -38,6 +41,14 @@ class PageSerializer(serializers.ModelSerializer):
         for tag_name in tags_names:
             tag = Tag.objects.get_or_create(name=tag_name)[0]
             page.tags.add(tag.id)
+        data = {
+            "page_id": str(page.id),
+            "owner_id": str(page.owner.id),
+            "posts_amount": 0,
+            "likes_amount": 0,
+            "followers_amount": 0
+        }
+        publish("create_page", json.dumps(data))
         return page
 
     def update(self, instance: Page, validated_data: dict[str, str]) -> Page:

@@ -1,11 +1,11 @@
-from uuid import UUID
+from typing import Optional
 
 from pydantic import BaseModel
 
 
 class PageStatistics(BaseModel):
-    owner_id: UUID
-    page_id: UUID
-    posts_amount: int
-    followers_amount: int
-    likes_amount: int
+    owner_id: str
+    page_id: str
+    posts_amount: Optional[int] = None
+    followers_amount: Optional[int] = None
+    likes_amount: Optional[int] = None

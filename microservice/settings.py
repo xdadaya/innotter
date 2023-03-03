@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     AWS_ACCESS_KEY: str
     AWS_SECRET_ACCESS_KEY: str
     AWS_DYNAMODB_TABLE_NAME: str
+    RB_HOST: str
 
     class Config:
         env_file = ".env"
