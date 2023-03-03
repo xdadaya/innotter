@@ -1,16 +1,18 @@
-from users.serializers import RegistrationSerializer, LoginSerializer
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status, viewsets, mixins, filters
-from rest_framework.permissions import IsAuthenticated, BasePermission
-from users.permissions import IsAdmin
-from rest_framework.decorators import action
+import uuid
+
 from django.http import HttpRequest
+from rest_framework import status, viewsets, mixins, filters
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated, BasePermission
+from rest_framework.response import Response
+from rest_framework.views import APIView
+
+from users.models import User
+from users.permissions import IsAdmin
+from users.serializers import RegistrationSerializer, LoginSerializer
+from users.serializers import UserSerializer
 from users.token_service import TokenService
 from users.user_service import UserService
-from users.models import User
-from users.serializers import UserSerializer
-import uuid
 
 
 class RegistrationAPIView(APIView):

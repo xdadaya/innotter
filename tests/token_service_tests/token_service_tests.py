@@ -1,7 +1,8 @@
+import pytest
+
+from innotter import settings
 from tests.factories import UserFactory
 from users.token_service import TokenService
-from innotter import settings
-import pytest
 
 
 @pytest.mark.django_db

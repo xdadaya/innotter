@@ -1,7 +1,8 @@
-from rest_framework import permissions
 from django.http import HttpRequest
-from posts.models import Post
+from rest_framework import permissions
 from rest_framework.viewsets import ModelViewSet
+
+from posts.models import Post
 from users.models import User
 
 

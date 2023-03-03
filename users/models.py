@@ -1,7 +1,9 @@
+import uuid
+
 from django.db import models
+
 from users.managers import UserManager
 from users.userABC import UserABC
-import uuid
 
 
 class User(UserABC):

@@ -1,9 +1,10 @@
 from rest_framework import serializers
+
 from pages.models import Page, FollowRequest
-from users.serializers import UserSerializer
-from tags.serializers import TagSerializer
-from tags.models import Tag
 from shared.s3_service import S3Service
+from tags.models import Tag
+from tags.serializers import TagSerializer
+from users.serializers import UserSerializer
 
 
 class FollowRequestSerializer(serializers.ModelSerializer):

@@ -1,7 +1,8 @@
-from rest_framework import serializers
-from users.models import User
 from django.contrib.auth import authenticate
+from rest_framework import serializers
+
 from shared.s3_service import S3Service
+from users.models import User
 
 
 class RegistrationSerializer(serializers.ModelSerializer):

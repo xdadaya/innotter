@@ -1,8 +1,8 @@
-from datetime import datetime, timedelta
-from django.conf import settings
-from rest_framework import exceptions
-import jwt
 import uuid
+from datetime import datetime, timedelta
+
+import jwt
+from django.conf import settings
 
 
 class TokenService:

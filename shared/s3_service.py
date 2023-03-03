@@ -1,6 +1,8 @@
-from rest_framework.serializers import ImageField
 from datetime import datetime
+
 import boto3
+from rest_framework.serializers import ImageField
+
 import shared.aws_credentials as aws_creds
 
 

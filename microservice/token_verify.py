@@ -1,7 +1,9 @@
-from fastapi import HTTPException
 from datetime import datetime
-from microservice.settings import settings
+
 import jwt
+from fastapi import HTTPException
+
+from microservice.settings import settings
 
 
 class TokenVerify:

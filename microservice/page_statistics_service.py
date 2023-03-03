@@ -1,6 +1,7 @@
 from fastapi import HTTPException
-from microservice.models import PageStatistics
+
 from microservice.db import PageStatisticsDatabase
+from microservice.models import PageStatistics
 
 
 class PageStatisticsService:

@@ -1,9 +1,10 @@
-from fastapi import FastAPI, Request, HTTPException
-from microservice.models import PageStatistics
-from microservice.token_verify import TokenVerify
-from microservice.page_statistics_service import PageStatisticsService
 from uuid import UUID
 
+from fastapi import FastAPI, Request, HTTPException
+
+from microservice.models import PageStatistics
+from microservice.page_statistics_service import PageStatisticsService
+from microservice.token_verify import TokenVerify
 
 app = FastAPI()
 
@@ -21,4 +22,4 @@ async def add_process_time_header(request: Request, call_next):
 
 @app.get('/page-statistics/{page_id}', response_model=PageStatistics)
 async def index(page_id: UUID, request: Request) -> PageStatistics:
-    return PageStatisticsService.get(str(page_id).replace("-", ""), request.state.uid)
+    return PageStatisticsService.get(str(page_id).replace('-', ''), request.state.uid)

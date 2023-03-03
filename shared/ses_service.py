@@ -1,6 +1,7 @@
-from celery import shared_task
-import shared.aws_credentials as aws_creds
 import boto3
+from celery import shared_task
+
+import shared.aws_credentials as aws_creds
 
 
 class SESService:

@@ -1,8 +1,8 @@
-from users.models import User
-from pages.models import Page
-from users.serializers import UserSerializer
-from datetime import date
 import uuid
+from datetime import date
+
+from pages.models import Page
+from users.models import User
 
 
 class UserService:
