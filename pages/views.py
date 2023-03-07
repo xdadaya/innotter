@@ -1,4 +1,6 @@
+import json
 import uuid
+from typing import Any
 
 from django.http import HttpRequest
 from rest_framework import filters
@@ -8,6 +10,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated, BasePermission
 from rest_framework.response import Response
 from rest_framework.viewsets import ModelViewSet
 
+from innotter.producer import publish
 from pages.models import Page
 from pages.page_service import PageService
 from pages.permissions import IsOwner, IsModerator, IsAdmin
@@ -24,8 +27,13 @@ class PageViewSet(ModelViewSet):
     def perform_create(self, serializer: PageSerializer) -> None:
         serializer.save(owner=self.request.user)
 
-    def destroy(self, request: HttpRequest, *args, **kwargs) -> Response:
+    def destroy(self, request: HttpRequest, *args: list[Any], **kwargs: dict[Any, Any]) -> Response:
         instance = self.get_object()
+        data = {
+            "page_id": str(instance.id),
+            "owner_id": str(instance.owner.id)
+        }
+        publish("delete_page", json.dumps(data))
         self.perform_destroy(instance)
         return Response(status=status.HTTP_200_OK)
 
