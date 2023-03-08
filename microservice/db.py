@@ -16,7 +16,6 @@ class PageStatisticsDatabase:
 
     @classmethod
     def create_item(cls, page_statistics: PageStatistics) -> None:
-        print("CREATE ITEM")
         cls.table.put_item(
             Item={
                 'page_id': page_statistics.page_id,
