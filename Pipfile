@@ -25,6 +25,7 @@ exceptiongroup = "*"
 fastapi = "*"
 uvicorn = "*"
 python-dotenv = "*"
+drf-yasg = "*"
 
 [dev-packages]
 

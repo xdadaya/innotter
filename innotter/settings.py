@@ -42,7 +42,8 @@ INSTALLED_APPS = [
     "users",
     "pages",
     "tags",
-    "posts"
+    "posts",
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [

@@ -31,7 +31,7 @@ services:
     restart: always
 
   rabbitmq:
-    container_name: rabbitmq
+    container_name: rabbitmq_innotter
     image: public.ecr.aws/docker/library/rabbitmq:3
     ports:
       - "5672:5672"
@@ -67,16 +67,6 @@ services:
     depends_on:
       rabbitmq:
         condition: service_healthy
-
-  producer:
-    container_name: statistics_producer
-    build: .
-    entrypoint: /producer_entrypoint.sh
-    depends_on:
-      rabbitmq:
-        condition: service_healthy
-      microservice:
-        condition: service_started
 
   consumer:
     container_name: statistics_consumer

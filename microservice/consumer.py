@@ -7,7 +7,7 @@ from microservice.models import PageStatistics
 
 connection = pika.BlockingConnection(
     pika.ConnectionParameters(
-        host=os.environ.get("RB_HOST"),
+        host="rabbitmq_innotter"
     )
 )
 
