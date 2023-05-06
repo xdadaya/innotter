@@ -9,8 +9,10 @@ services:
     ports:
       - "8000:8000"
     env_file:
-      - ./innotter/.env
+      - ./.env
     depends_on:
+      rabbitmq:
+        condition: service_healthy
       db:
         condition: service_started
 
@@ -27,6 +29,57 @@ services:
     ports:
       - "5432:5432"
     restart: always
+
+  rabbitmq:
+    container_name: rabbitmq_innotter
+    image: public.ecr.aws/docker/library/rabbitmq:3
+    ports:
+      - "5672:5672"
+    healthcheck:
+      test: rabbitmq-diagnostics -q ping
+      interval: 15s
+      timeout: 15s
+      retries: 10
+
+
+  celery:
+    container_name: celery
+    build: .
+    entrypoint: /celery_entrypoint.sh
+    env_file:
+      - ./.env
+    depends_on:
+      app:
+        condition: service_started
+      rabbitmq:
+        condition: service_healthy
+
+  microservice:
+    container_name: microservice_statistics
+    build:
+      context: .
+      dockerfile: microservice/Dockerfile
+    volumes:
+      - .:/app/microservice
+    ports:
+      - "5000:5000"
+    entrypoint: /microservice_entrypoint.sh
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  consumer:
+    container_name: statistics_consumer
+    build:
+      context: .
+      dockerfile: microservice/Dockerfile
+    entrypoint: /consumer_entrypoint.sh
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      microservice:
+        condition: service_started
+
 
 volumes:
   postgres:

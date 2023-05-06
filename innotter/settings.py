@@ -10,9 +10,8 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
-from pathlib import Path
 import os
-
+from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -39,6 +38,12 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "rest_framework",
+    "users",
+    "pages",
+    "tags",
+    "posts",
+    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -127,3 +132,33 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+AUTH_USER_MODEL = "users.User"
+
+AUTHENTICATION_HEADER_PREFIX = os.environ.get("AUTHENTICATION_HEADER_PREFIX")
+HASH_ALGORITHM = os.environ.get("HASH_ALGORITHM")
+DELTA_DAYS_FOR_TOKEN_TO_EXPIRE = os.environ.get("DELTA_DAYS_FOR_TOKEN_TO_EXPIRE")
+
+AWS_ACCESS_KEY = os.environ.get("AWS_ACCESS_KEY")
+AWS_SECRET_ACCESS_KEY = os.environ.get("AWS_SECRET_ACCESS_KEY")
+AWS_S3_BUCKET_NAME = os.environ.get("AWS_S3_BUCKET_NAME")
+AWS_S3_REGION = os.environ.get("AWS_S3_REGION")
+AWS_SES_REGION = os.environ.get("AWS_SES_REGION")
+AWS_SES_SOURCE = os.environ.get("AWS_SES_SOURCE")
+
+AWS_S3_BUCKET_BASE_FILE_URL = url = f"https://s3-{AWS_S3_REGION}.amazonaws.com/{AWS_S3_BUCKET_NAME}/"
+
+CELERY_BROKER_URL = os.environ.get("CELERY_BROKER_URL")
+CELERY_BROKER_TRANSPORT_OPTIONS = {
+    'visibility_timeout': os.environ.get("CELERY_BROKER_TRANSPORT_OPTIONS_VISIBILITY_TIMEOUT")
+}
+CELERY_RESULT_BACKEND = os.environ.get("CELERY_RESULT_BACKEND")
+CELERY_ACCEPT_CONTENT = [os.environ.get("CELERY_ACCEPT_CONTENT")]
+
+RB_HOST = os.environ.get("RB_HOST")
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'users.authentication.JWTAuthentication',
+    ),
+}
